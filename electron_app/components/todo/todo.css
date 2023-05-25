@@ -1,0 +1,78 @@
+
+
+#todo-container {
+    color: rgba(120, 200, 120, 0.822);
+  }
+  
+  .todo-list {
+    padding: 0;
+    text-align: center;
+    color: rgb(120, 200, 120);
+    margin-top: -10em;
+    padding-top: -10em;
+  }
+  li {
+    list-style-type: none;
+    margin-left: -3rem;
+    margin-bottom: 0.5rem;
+    color: rgb(120, 200, 120);
+    text-align: center;
+    background-color: rgb(48, 48, 48);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 800px;
+    padding: 0.5rem;
+    font-size: 0.8em;
+    border: 2px solid transparent; /* Ensures that all list items have the same size whether they are active or not */
+    transition: border-color 0.3s; 
+  }
+  
+  input[type="text"] {
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 19px;
+    width: 60%;
+    background-color: rgb(67, 69, 71);
+    color: rgb(149, 166, 149);
+    box-sizing: border-box;
+    margin-top: 0.6em;
+  }
+  
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  button {
+    background-color: rgb(85, 117, 85);
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-left: 0.5rem;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem; /* Space between the buttons */
+    margin-top: 1rem;
+    flex-wrap: nowrap;
+    margin-top: 0.5em;
+    margin-bottom: 0em;
+  }
+  
+  
+  .show-btns {
+    width: 10.5rem;
+    height: 3.5rem;
+    border-radius: 0.1em;
+    font-size: 1.6rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Info Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="components/alarm/alarm.css">
+  <link rel="stylesheet" type="text/css" href="components/bot/bot.css">
+  <link rel="stylesheet" type="text/css" href="components/crypto/crypto.css">
+  <link rel="stylesheet" type="text/css" href="components/todo/todo.css">
+  <link rel="stylesheet" type="text/css" href="components/weather/weather.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="top-row">
+      <div id="clock" class="clock"></div>
+      <div id="weather-now"></div>
+      <div class="button-container">
+
+        <div id="alarm-container">
+          <label for="loud-switch">Quiet</label>
+          <div class="switch">
+              <input type="checkbox" id="loud-switch">
+              <span class="slider round"></span>
+          </div>
+          <label for="loud-switch">Loud</label>
+          <button id="alarm-off"class='offbtn'>Off</button>
+        </div>
+      </div>  
+    </div>
+
+    <div id="weather-container" class="box label-white">
+      <div class="weather-columns">
+        <div class="weather-data">
+          <div class="weather-section center hourly">
+            <div id="weather-hourly"></div>
+            <div class="select-list" id="weather-hourly-select"></div>
+          </div>
+          <div class="weather-section center daily">
+            <div id="weather-daily"></div>
+            <div class="select-list" id="weather-daily-select"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="crypto-container" class="box label-white center crypto"></div>
+   <!-- Wrap the KucoinBots and projected income container in a new div -->
+   <div class="bot-and-income-container">
+    <div id="kucoinBots-container" class="box label-white center bot"></div>
+    <!-- <div id="projected-incomes" class="projInc label-white"></div> -->
+    <h6>Creativity ~ Critical Thinking ~ Emotional Maturity ~ Communication</h6>
+  </div>
+  
+  
+    <div id="todo-container" class="box center">
+      <form id="todo-form">
+        <input id="todo-input" type="text" placeholder="Add todo" />
+      </form>
+      <ul id="todo-list" class="center"></ul>
+    </div>
+
+
+
+
+  </div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+
+</html>

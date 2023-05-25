@@ -1,0 +1,30 @@
+{
+    "name": "info-dashboard-server",
+    "version": "1.0.0",
+    "description": "Info Dashboard API Server",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "axios": "^0.26.1",
+        "body-parser": "^1.20.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "express": "^4.17.2",
+        "firebase-admin": "^11.8.0",
+        "heroku-cli": "^6.16.13",
+        "http": "^0.0.1-security",
+        "kucoin-node-api": "^2.1.5",
+        "kucoin-node-sdk": "^1.0.4",
+        "node-telegram-bot-api": "^0.61.0",
+        "socket.io": "^4.6.1",
+        "technicalindicators": "^3.1.0"
+    },
+    "devDependencies": {
+        "concurrently": "^7.0.0"
+    },
+    "engines": {
+        "node": "16.8"
+    }
+}

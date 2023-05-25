@@ -1,0 +1,24 @@
+
+.bot {
+    margin-top: -0.2em;
+    margin-bottom: 0em;
+  }
+  
+  .bot-and-income-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 1em;
+    padding-right: 1em; 
+  }
+  
+  .projInc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .projInc p {
+    margin: 0;
+  }

@@ -1,0 +1,272 @@
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+const crypto = require('crypto');
+const ipaddr = require('ipaddr.js');
+const http = require('http');
+const { Server } = require('socket.io');
+const TelegramBot = require('node-telegram-bot-api');
+const technicalIndicators = require('technicalindicators');
+
+const bodyParser = require('body-parser');
+
+
+//Recieve a phone notification when your bot USDT balance changes (bot made a trade)
+//Create a telegram bot get its token, send it a request & log the chat id for first time setup
+const TELEGRAM_BOT_TOKEN = 'TELE_BOT_TOKEN';  // Replace with your bot token
+const TELEGRAM_CHAT_ID = 'TELE_CHAT_ID';  // Replace with your chat id
+
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
+
+// Function to send a message via your Telegram bot
+function sendTelegramMessage(text) {
+  bot.sendMessage(TELEGRAM_CHAT_ID, text);
+}
+
+const app = express();
+app.use(cors());
+// to support JSON-encoded bodies
+app.use(bodyParser.json());
+
+// to support URL-encoded bodies
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+const KUCOIN_API_KEY = 'API_KEY';
+const KUCOIN_SECRET_KEY = 'SECRET_KEY';
+const KUCOIN_PASSPHRASE = 'monitor1';
+const OPEN_WEATHER_MAP_API_KEY = 'WEATHER_API_KEY';
+
+
+app.get('/weather', async (req, res) => {
+    try {
+      let ipAddress = req.ip;
+      if (ipAddress.substr(0, 7) === '::ffff:') {
+        ipAddress = ipAddress.substr(7);
+      }
+      //ENTER YOUR IP FOR LOCAL WEATHER DATA//
+      const parsedIp = ipaddr.process('YOURIP');
+  
+      const locationResponse = await axios.get(`http://ip-api.com/json/${parsedIp}`);
+
+      const { lat, lon } = locationResponse.data;
+  
+      if (lat === undefined || lon === undefined) {
+        console.error('Latitude or longitude is undefined.');
+        res.status(400).json({ error: 'Latitude or longitude is undefined.' });
+      } else {
+        const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts&units=metric&appid=${OPEN_WEATHER_MAP_API_KEY}`);
+        res.json(weatherResponse.data);
+      }
+    } catch (error) {
+      console.error('Error fetching weather data:', error.message);
+      res.status(500).send('Error fetching weather data');
+    }
+  });
+
+  async function fetchOHLCV(symbol, timeframe) {
+    const path = `/api/v1/market/candles?symbol=${symbol}&type=${timeframe}`;
+    const url = `https://api.kucoin.com${path}`;
+    const response = await axios.get(url);
+  
+    if (response && response.status === 200) {
+      return response.data && response.data.data;
+    } else {
+      console.error('Error fetching Kucoin OHLCV data:', response.statusText, response.data);
+      throw new Error('Error fetching Kucoin OHLCV data');
+    }
+  }
+  
+  app.get('/crypto', async (req, res) => {
+    try {
+      const pairs = ['BTC-USDT', 'LTC-USDT', 'DOGE-USDT', 'XRP-USDT', 'SHIB-USDT'];
+      const timeframes = ['1hour', '1day'];
+      const kucoinData = await Promise.all(pairs.map(async (pair) => {
+        const response = await axios.get(`https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=${pair}`);
+        const price = response.data.data.price;
+        const ohlcv = {};
+        const trends = {};
+  
+        await Promise.all(timeframes.map(async (timeframe) => {
+          const data = await fetchOHLCV(pair, timeframe);
+          ohlcv[timeframe] = data;
+          const closes = data.map(candle => parseFloat(candle[4]));
+        
+          let rsi, macd, sma;
+          if (closes.length >= 14) {
+            rsi = technicalIndicators.RSI.calculate({ values: closes, period: 14 });
+          }
+          if (closes.length >= 26) {
+            macd = technicalIndicators.MACD.calculate({ values: closes, fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, SimpleMAOscillator: false, SimpleMASignal: false });
+          }
+          if (closes.length >= 15) {
+            sma = technicalIndicators.SMA.calculate({ values: closes, period: 15 });
+          }
+          
+          // Get the most recent values
+          const recentRSI = rsi ? rsi[rsi.length - 1] : null;
+          const recentMACD = macd ? macd[macd.length - 1].histogram : null; // Use the histogram value for trend determination
+          const recentSMA = sma ? sma[sma.length - 1] : null;
+          const recentClose = closes[closes.length - 1];
+          
+          // Determine the trend based on the indicators
+          const isUpwardTrend = recentRSI > 50 && recentMACD > 0 && recentClose > recentSMA;
+          const isDownwardTrend = recentRSI < 50 && recentMACD < 0 && recentClose < recentSMA;
+          
+          if (isUpwardTrend) {
+            trends[timeframe] = 'upward';
+          } else if (isDownwardTrend) {
+            trends[timeframe] = 'downward';
+          } else {
+            trends[timeframe] = 'neutral';
+          }
+        }));
+        
+  
+        return { pair: pair.replace('-', '/'), price, ohlcv, trends };
+      }));
+  
+      res.json({ kucoin: kucoinData });
+  
+    } catch (error) {
+      console.error('Error fetching crypto data:', error.message);
+      res.status(500).send('Error fetching crypto data');
+    }
+  });
+  
+  
+
+function signRequest(path, secret, timestamp, method = 'GET', params = '') {
+    const what = timestamp + method + path + params;
+    const hmac = crypto.createHmac('sha256', secret);
+    const signature = hmac.update(what).digest('base64');
+    return signature;
+  }
+
+  async function fetchTradingHistory(apiKey, secretKey, passphrase, symbol) {
+    const path = '/api/v1/fills';
+    const method = 'GET';
+    const queryParams = `?symbol=${symbol}&page=1&pageSize=100`;
+    const url = `https://api.kucoin.com${path}${queryParams}`;
+    const timestamp = Date.now().toString();
+  
+    const signature = signRequest(path, secretKey, timestamp, method, queryParams);
+  
+    const config = {
+      headers: {
+        'KC-API-SIGN': signature,
+        'KC-API-TIMESTAMP': timestamp,
+        'KC-API-KEY': apiKey,
+        'KC-API-PASSPHRASE': passphrase,
+        'KC-API-KEY-VERSION': '1',
+      },
+    };
+  
+    const response = await axios.get(url, config);
+  
+    if (response && response.status === 200) {
+      return response.data && response.data.data;
+    } else {
+      console.error('Error fetching Kucoin trading history:', response.statusText, response.data);
+      throw new Error('Error fetching Kucoin trading history');
+    }
+  }
+
+  async function getKucoinBots() {
+    try {
+      const path = '/api/v2/sub-accounts';
+      const method = 'GET';
+      const queryParams = `?currentPage=1&pageSize=10`;
+      const url = `https://api.kucoin.com${path}${queryParams}`;
+      const timestamp = Date.now().toString();
+  
+      const signature = signRequest(path, KUCOIN_SECRET_KEY, timestamp, method, queryParams);
+  
+      const config = {
+        headers: {
+          'KC-API-SIGN': signature,
+          'KC-API-TIMESTAMP': timestamp,
+          'KC-API-KEY': KUCOIN_API_KEY,
+          'KC-API-PASSPHRASE': KUCOIN_PASSPHRASE,
+          'KC-API-KEY-VERSION': '1',
+        },
+      };
+  
+      const response = await axios.get(url, config);
+  
+      if (response && response.data && response.data.data) {
+        let nonZeroBalances = [];
+        let history = [];
+  
+        for (let item of response.data.data.items) {
+          const nonZeroBalancesForItem = item.tradeAccounts.filter(account => parseFloat(account.balance) > 0);
+          nonZeroBalances = [...nonZeroBalances, ...nonZeroBalancesForItem];
+          const historyForItem = await Promise.all(nonZeroBalancesForItem.map(account => fetchTradingHistory(KUCOIN_API_KEY, KUCOIN_SECRET_KEY, KUCOIN_PASSPHRASE, `${account.currency}-USDT`)));
+          history = [...history, ...historyForItem];
+        }
+  
+        return { nonZeroBalances, history };
+      } else {
+        console.error('Error fetching Kucoin account data:', response.statusText);
+        throw new Error('Error fetching Kucoin account data');
+      }
+    } catch (error) {
+      console.error('Error fetching Kucoin account data:', error.message);
+      throw new Error('Error fetching Kucoin account data');
+    }
+  }
+  
+  app.get('/kucoinBots', async (req, res) => {
+    try {
+      const { nonZeroBalances, history } = await getKucoinBots();
+
+      res.json({ nonZeroBalances, history });
+
+    } catch (error) {
+      console.error('Error fetching Kucoin sub user data:', error.message);
+      res.status(500).send('Error fetching Kucoin sub user data');
+    }
+  });
+  
+  let prevUsdtBalance = null;
+
+  async function checkBalanceChange(newBalance) {
+    const usdtBalance = parseFloat(newBalance);
+    
+
+  
+    // Send a Telegram message whenever USDT balance changes
+    sendTelegramMessage(`Check Market: USDT balance changed from ${prevUsdtBalance} to ${usdtBalance}`);
+    
+    prevUsdtBalance = usdtBalance;
+  }
+  
+  app.post('/usdtBalanceChanged', async (req, res) => {
+    try {
+
+      const newBalance = req.body.balance;
+      await checkBalanceChange(newBalance);
+      res.sendStatus(200);  // OK
+    } catch (error) {
+      console.error('Error checking balance change:', error.message);
+      res.status(500).send('Error checking balance change');
+    }
+  });
+  
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+});
+  
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+console.log(`Server is running on port ${PORT}`);
+});

@@ -1,0 +1,20 @@
+.crypto {
+    -webkit-app-region: drag;
+    margin-top: -0.2em;
+    margin-bottom: 0em;
+  
+    padding-left: 1.7em;
+    padding-right: 1.7em;
+  }
+
+  .red {
+    color: red;
+  }
+
+  .green {
+    color: rgb(120, 200, 120);
+  }
+
+  .blue {
+    color: rgb(31, 102, 255);
+  }
