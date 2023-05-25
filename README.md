@@ -10,6 +10,7 @@
   - Fetches current, hourly & daily weather data at 1 location 
   - Todo list using local storage
   - Electron.js, Node.js
+
 <b><b>Installation (windows 10/11)</b></b>
   - Download & Install Node.js
   - Download and extract project
@@ -19,6 +20,7 @@
   - type "npm install" 
   - close terminal
   - double click start_app.bat located in the root of the project "datamonitor/start_app.bat"
+  
 <b><b>API key setup</b></b>
   - For weather data, you must obtain a key from https://api.openweathermap.org and edit the server.js file
     in 2 places. It is located in datamonitor/server/server.js. You must enter your key on line 39
