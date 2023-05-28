@@ -34,3 +34,5 @@
     the same syntax and that kucoin lists the pair. The Bot section loops through all your active bots and displays
     the whole total and each individial crypto total.
   - Save the server and start the app
+<b>The global alarm off keyboard key will make that key useless in other apps while this app is running. I chose the up arrow, but 
+   you can change it to what you like on line 35 in electron_app/components/alarm.js and lines 24 and 31 in electron_app/main.js </b>
