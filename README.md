@@ -42,6 +42,7 @@
   - create a console log inside the sendTelegramMessage() to get the chat id from the token, console.log(bot.TELEGRAM_CHAT_ID)
   - run the app and check the server console for the logged chat id and enter it on line 17 in the server.js file.
   - delete the console.log you just added.
+ 
  <b><b>Start App</b></b>
   - double click start_app.bat located in the root of the project "datamonitor/start_app.bat", you can also pin the batch shortcut to
     your taskbar.
