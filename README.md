@@ -19,8 +19,7 @@
   - type cd server to navigate to the server
   - type "npm install" 
   - close terminal
-  - double click start_app.bat located in the root of the project "datamonitor/start_app.bat"
-  
+ 
 <b><b>API key setup</b></b>
   - For weather data, you must obtain a key from https://api.openweathermap.org and edit the server.js file
     in 2 places. It is located in datamonitor/server/server.js. You must enter your key on line 39
@@ -33,6 +32,8 @@
   - You change the pairs you want to follow in the /crypto route in the server on line 83, make sure to keep
     the same syntax and that kucoin lists the pair. The Bot section loops through all your active bots and displays
     the whole total and each individial crypto total.
-  - Save the server and start the app
-<b>The global alarm off keyboard key will make that key useless in other apps while this app is running. I chose the up arrow, but 
-   you can change it to what you like on line 35 in electron_app/components/alarm.js and lines 24 and 31 in electron_app/main.js </b>
+  - The global alarm off keyboard key will make that key useless in other apps while this app is running. I chose the up arrow, but 
+    you can change it to what you like on line 35 in electron_app/components/alarm.js and lines 24 and 31 in electron_app/main.js 
+ <b>Start App</b>
+    double click start_app.bat located in the root of the project "datamonitor/start_app.bat", you can also pin the batch shortcut to
+    your taskbar.
