@@ -35,13 +35,13 @@
   - The global alarm off keyboard key will make that key useless in other apps while this app is running. I chose the up arrow, but 
     you can change it to what you like on line 35 in electron_app/components/alarm.js and lines 24 and 31 in electron_app/main.js 
     
- <b>Telegram mobile notifications when one of your kucoin bots make a trade</b>
+ <b><b>Telegram mobile notifications when one of your kucoin bots make a trade</b></b>
  -Download telegram on mobile device
  -Get the bot token from the bot father on telegram for your telegram bot
  -paste it into line 16 in server.js
  -create a console log inside the sendTelegramMessage() to get the chat id from the token, console.log(bot.TELEGRAM_CHAT_ID)
  -run the app and check the server console for the logged chat id and enter it on line 17 in the server.js file.
  -delete the console.log you just added.
- <b>Start App</b>
+ <b><b>Start App</b></b>
     double click start_app.bat located in the root of the project "datamonitor/start_app.bat", you can also pin the batch shortcut to
     your taskbar.
