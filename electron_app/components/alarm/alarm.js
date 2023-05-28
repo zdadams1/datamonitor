@@ -30,9 +30,9 @@ function initAlarmController() {
     document.getElementById("alarm-off").addEventListener("click", () => {
         stopAlarm();
     });
-    document.addEventListener('keydown', function(event) {
-        // The keyCode for the 'Esc' key is 27.
-        if (event.keyCode === 27) {
+    document.addEventListener('keyup', function(event) {
+        // The keyCode for the 'Up Arrow' key is 38.
+        if (event.keyCode === 38) {
             stopAlarm();
         }
     });

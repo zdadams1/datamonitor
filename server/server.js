@@ -13,8 +13,8 @@ const bodyParser = require('body-parser');
 
 //Recieve a phone notification when your bot USDT balance changes (bot made a trade)
 //Create a telegram bot get its token, send it a request & log the chat id for first time setup
-const TELEGRAM_BOT_TOKEN = 'TELE_BOT_TOKEN';  // Replace with your bot token
-const TELEGRAM_CHAT_ID = 'TELE_CHAT_ID';  // Replace with your chat id
+const TELEGRAM_BOT_TOKEN = '6229171714:AAG66EOGBiFRMXsPpq9DhcTX0z37Pdm9Ukg';  // Replace with your bot token
+const TELEGRAM_CHAT_ID = '6286039179';  // Replace with your chat id
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
 
@@ -33,10 +33,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-const KUCOIN_API_KEY = 'API_KEY';
-const KUCOIN_SECRET_KEY = 'SECRET_KEY';
+const KUCOIN_API_KEY = '646ec3653b93ab000140ee6f';
+const KUCOIN_SECRET_KEY = '345092d7-e68a-4b36-9d0d-7e7d005a6302';
 const KUCOIN_PASSPHRASE = 'monitor1';
-const OPEN_WEATHER_MAP_API_KEY = 'WEATHER_API_KEY';
+const OPEN_WEATHER_MAP_API_KEY = 'cef37e113f5926fa0787d0b75601e322';
 
 
 app.get('/weather', async (req, res) => {
@@ -46,7 +46,7 @@ app.get('/weather', async (req, res) => {
         ipAddress = ipAddress.substr(7);
       }
       //ENTER YOUR IP FOR LOCAL WEATHER DATA//
-      const parsedIp = ipaddr.process('YOURIP');
+      const parsedIp = ipaddr.process('73.90.54.140');
   
       const locationResponse = await axios.get(`http://ip-api.com/json/${parsedIp}`);
 
@@ -80,7 +80,7 @@ app.get('/weather', async (req, res) => {
   
   app.get('/crypto', async (req, res) => {
     try {
-      const pairs = ['BTC-USDT', 'LTC-USDT', 'DOGE-USDT', 'XRP-USDT', 'SHIB-USDT'];
+      const pairs = ['BTC-USDT', 'LTC-USDT', 'DOGE-USDT', 'XRP-USDT', 'KAS-USDT'];
       const timeframes = ['1hour', '1day'];
       const kucoinData = await Promise.all(pairs.map(async (pair) => {
         const response = await axios.get(`https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=${pair}`);

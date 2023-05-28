@@ -21,14 +21,14 @@ let mainWindow;
 
 app.whenReady().then(() => {
   mainWindow = createWindow();
-  const ret = globalShortcut.register('Escape', () => {
-    // Send a message to renderer process
+  const ret = globalShortcut.register('Up', () => {
+    // Send a message to the renderer process
     mainWindow.webContents.send('stop-alarm');
   });
 });
 
 app.on('will-quit', () => {
-  globalShortcut.unregister('Escape');
+  globalShortcut.unregister('Up');
   globalShortcut.unregisterAll();
 });
 
