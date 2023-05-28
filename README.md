@@ -39,7 +39,8 @@
   - Download telegram on mobile device
   - Get the bot token from the bot father on telegram for your telegram bot
   - paste it into line 16 in server.js
-  - create a console log inside the sendTelegramMessage() to get the chat id from the token, console.log(bot.TELEGRAM_CHAT_ID)
+  - create a console log inside the sendTelegramMessage() function starting on line 22 in server.js to get the chat 
+    id from the token, console.log(bot.TELEGRAM_CHAT_ID)
   - run the app and check the server console for the logged chat id and enter it on line 17 in the server.js file.
   - delete the console.log you just added.
  
